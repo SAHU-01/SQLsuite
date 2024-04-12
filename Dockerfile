@@ -1,10 +1,10 @@
-FROM ubuntu:18.04
+FROM ubuntu:22.04
 
 RUN dpkg --configure -a
 RUN apt-get update
 RUN apt-get -y install nodejs npm sqlite3 curl
 
-ENV NODE_VERSION=16.13.2
+ENV NODE_VERSION=18.17.0
 RUN curl https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
 ENV NVM_DIR=/root/.nvm
 RUN . "$NVM_DIR/nvm.sh" && nvm install ${NODE_VERSION}
