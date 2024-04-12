@@ -5,19 +5,34 @@ import { useEffect } from "react";
 import { FiSun, FiMoon, FiGithub } from "react-icons/fi";
 
 export default function Header() {
-  const switchTheme = () => {
-    // On page load or when changing themes, best to add inline in `head` to avoid FOUC
-    if (localStorage.theme === "dark" || !("theme" in localStorage)) {
-      document.documentElement.classList.remove("dark");
-      localStorage.theme = "light";
-    } else {
-      document.documentElement.classList.add("dark");
-      localStorage.theme = "dark";
-    }
-  };
+  const setTheme = (theme) => {
+      localStorage.theme = theme;
+      if (localStorage.theme === "dark" || !("theme" in localStorage)) {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+      }
+    },
+    changeTheme = () => {
+      const prevTheme = localStorage.theme;
+      setTheme(prevTheme === "light" ? "dark" : "light");
+    };
 
   useEffect(() => {
-    switchTheme();
+    window
+      .matchMedia("(prefers-color-scheme: dark)")
+      .addEventListener("change", (event) => {
+        const theme = event.matches ? "dark" : "light";
+        setTheme(theme);
+      });
+
+    setTheme(
+      !("theme" in localStorage)
+        ? window.matchMedia("(prefers-color-scheme: dark)").matches
+          ? "dark"
+          : "light"
+        : localStorage.theme
+    );
   }, []);
   return (
     <div>
@@ -33,7 +48,7 @@ export default function Header() {
         <div className="w-full h-full max-w-screen-xl m-auto flex justify-between items-center text-2xl text-darkBGColor dark:text-darkTextColor py-2">
           <span className="">Online SQL Editor</span>
           <div className="flex gap-4">
-            <span className="cursor-pointer" onClick={switchTheme}>
+            <span className="cursor-pointer" onClick={changeTheme}>
               <FiSun className="hidden dark:block" />
               <FiMoon className="block dark:hidden" />
             </span>
